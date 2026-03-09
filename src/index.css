@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+    --font-sans: 'Outfit', sans-serif;
+
+    --color-nutri-green: #00E676;
+    --color-nutri-dark: #111827;
+    --color-nutri-gray: #6B7280;
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        0% {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        100% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+}
+
+:root {
+    --background: #ffffff;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--background);
+    color: var(--nutri-dark);
+    -webkit-font-smoothing: antialiased;
+    font-family: var(--font-sans);
+}
+
+.btn-primary {
+    @apply bg-nutri-green text-nutri-dark font-bold px-6 py-3 rounded-xl transition-all hover:opacity-90 active:scale-95 flex items-center gap-2;
+}
+
+.btn-secondary {
+    @apply bg-white text-nutri-dark font-bold px-8 py-3 rounded-xl border border-slate-100 shadow-sm transition-all hover:bg-slate-50 active:scale-95;
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 1);
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+}
