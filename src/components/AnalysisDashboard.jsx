@@ -3,6 +3,28 @@ import { Camera, CheckCircle2, Leaf } from 'lucide-react';
 import UploadSection from './UploadSection';
 
 const AnalysisDashboard = ({ image, analysisResult, clearImage, handleImageUpload, isProcessing, processBackendImage }) => {
+    const totalCalories = Math.round(analysisResult?.foods?.reduce((sum, food) => {
+        const cal = typeof food.calories === 'string' ? parseFloat(food.calories.replace(/[^\d.-]/g, '')) : food.calories;
+        return sum + (!isNaN(cal) ? cal : 0);
+    }, 0) || 0);
+
+    const totalProtein = Math.round(analysisResult?.foods?.reduce((sum, food) => {
+        const val = typeof food.protein === 'string' ? parseFloat(food.protein.replace(/[^\d.-]/g, '')) : food.protein;
+        return sum + (!isNaN(val) ? val : 0);
+    }, 0) || 0);
+
+    const totalCarbs = Math.round(analysisResult?.foods?.reduce((sum, food) => {
+        const val = typeof food.carbs === 'string' ? parseFloat(food.carbs.replace(/[^\d.-]/g, '')) : food.carbs;
+        return sum + (!isNaN(val) ? val : 0);
+    }, 0) || 0);
+
+    const totalFat = Math.round(analysisResult?.foods?.reduce((sum, food) => {
+        const val = typeof food.fat === 'string' ? parseFloat(food.fat.replace(/[^\d.-]/g, '')) : food.fat;
+        return sum + (!isNaN(val) ? val : 0);
+    }, 0) || 0);
+
+    const mealName = analysisResult?.foods?.length > 1 ? "Combined Meal" : (analysisResult?.foods?.[0]?.name || "Dish");
+
     return (
         <main className="relative max-w-6xl mx-auto px-6 pt-8 pb-40 animate-slide-up-fade transition-all duration-700">
             {/* Background Decorative Elements */}
@@ -46,7 +68,7 @@ const AnalysisDashboard = ({ image, analysisResult, clearImage, handleImageUploa
             {analysisResult && !analysisResult.error && (
                 <div className="mb-8 animate-fade-in-quick">
                     <div className="text-[11px] text-slate-500 font-bold mb-2 tracking-widest uppercase">
-                        <span className="opacity-50">Analysis /</span> <span className="text-[#1B2533]">{analysisResult.foods?.[0]?.name || "Dish"} Breakdown</span>
+                        <span className="opacity-50">Analysis /</span> <span className="text-[#1B2533]">{mealName} Breakdown</span>
                     </div>
                     <div className="flex justify-between items-end">
                         <div>
@@ -112,12 +134,19 @@ const AnalysisDashboard = ({ image, analysisResult, clearImage, handleImageUploa
                                         <div className="flex flex-col gap-0 overflow-y-auto pr-2 pb-2 hide-scroll">
                                             {analysisResult.foods && analysisResult.foods.length > 0 ? (
                                                 analysisResult.foods.map((food, idx) => (
-                                                    <div key={idx} className="flex justify-between items-center py-5">
-                                                        <div className="flex items-center gap-5">
+                                                    <div key={idx} className="flex justify-between items-center py-5 border-b border-slate-50 last:border-0">
+                                                        <div className="flex items-center gap-4">
                                                             <div className="w-[52px] h-[52px] bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] text-[#00E676] rounded-2xl flex items-center justify-center shrink-0">
                                                                 <Leaf size={22} strokeWidth={2.5} />
                                                             </div>
-                                                            <span className="font-extrabold text-[#1B2533] text-[15px] capitalize tracking-wide">{food.name}</span>
+                                                            <div className="flex flex-col">
+                                                                <span className="font-extrabold text-[#1B2533] text-[15px] capitalize tracking-wide">{food.name}</span>
+                                                                <div className="flex gap-3 mt-1">
+                                                                    <span className="text-[11px] font-bold text-slate-500">P: <span className="text-[#2563EB]">{food.protein || '0g'}</span></span>
+                                                                    <span className="text-[11px] font-bold text-slate-500">C: <span className="text-[#F59E0B]">{food.carbs || '0g'}</span></span>
+                                                                    <span className="text-[11px] font-bold text-slate-500">F: <span className="text-[#E11D48]">{food.fat || '0g'}</span></span>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                         <span className="font-extrabold text-[#1B2533] text-[15px]">{food.calories} kcal</span>
                                                     </div>
@@ -136,7 +165,7 @@ const AnalysisDashboard = ({ image, analysisResult, clearImage, handleImageUploa
                                     {/* Circular Chart */}
                                     <div className="flex flex-col items-center justify-center mb-6 mt-2">
                                         <div className="w-56 h-56 rounded-full border-[14px] border-slate-50 border-t-[#00E676] border-r-[#00E676] border-b-[#00E676] flex flex-col items-center justify-center mb-8 relative">
-                                            <span className="text-[3.5rem] font-black text-[#1B2533] tracking-tighter leading-none">{analysisResult.foods?.[0]?.calories || 0}</span>
+                                            <span className="text-[3.5rem] font-black text-[#1B2533] tracking-tighter leading-none">{totalCalories}</span>
                                             <span className="text-sm font-black text-slate-400 tracking-widest uppercase mt-2">Kcal</span>
                                         </div>
                                         <p className="text-xs font-semibold text-slate-400">27% of your daily intake goal</p>
@@ -148,7 +177,7 @@ const AnalysisDashboard = ({ image, analysisResult, clearImage, handleImageUploa
                                         {/* Protein */}
                                         <div className="bg-slate-50 p-4 py-5 rounded-2xl flex flex-col items-center justify-center text-center">
                                             <span className="text-[10px] font-black uppercase tracking-widest text-[#1B2533] mb-3">Protein</span>
-                                            <span className="text-[1.75rem] leading-none font-bold text-[#2563EB] mb-4">{analysisResult.foods?.[0]?.protein || '0g'}</span>
+                                            <span className="text-[1.75rem] leading-none font-bold text-[#2563EB] mb-4">{totalProtein}g</span>
                                             <div className="h-1.5 w-12 bg-slate-200 rounded-full overflow-hidden mx-auto">
                                                 <div className="h-full bg-[#2563EB] rounded-full w-[60%]"></div>
                                             </div>
@@ -157,7 +186,7 @@ const AnalysisDashboard = ({ image, analysisResult, clearImage, handleImageUploa
                                         {/* Carbs */}
                                         <div className="bg-slate-50 p-4 py-5 rounded-2xl flex flex-col items-center justify-center text-center">
                                             <span className="text-[10px] font-black uppercase tracking-widest text-[#1B2533] mb-3">Carbs</span>
-                                            <span className="text-[1.75rem] leading-none font-bold text-[#F59E0B] mb-4">{analysisResult.foods?.[0]?.carbs || '0g'}</span>
+                                            <span className="text-[1.75rem] leading-none font-bold text-[#F59E0B] mb-4">{totalCarbs}g</span>
                                             <div className="h-1.5 w-12 bg-slate-200 rounded-full overflow-hidden mx-auto">
                                                 <div className="h-full bg-[#F59E0B] rounded-full w-[45%]"></div>
                                             </div>
@@ -166,7 +195,7 @@ const AnalysisDashboard = ({ image, analysisResult, clearImage, handleImageUploa
                                         {/* Fats */}
                                         <div className="bg-slate-50 p-4 py-5 rounded-2xl flex flex-col items-center justify-center text-center">
                                             <span className="text-[10px] font-black uppercase tracking-widest text-[#1B2533] mb-3">Fats</span>
-                                            <span className="text-[1.75rem] leading-none font-bold text-[#E11D48] mb-4">{analysisResult.foods?.[0]?.fat || '0g'}</span>
+                                            <span className="text-[1.75rem] leading-none font-bold text-[#E11D48] mb-4">{totalFat}g</span>
                                             <div className="h-1.5 w-12 bg-slate-200 rounded-full overflow-hidden mx-auto">
                                                 <div className="h-full bg-[#E11D48] rounded-full w-[30%]"></div>
                                             </div>
